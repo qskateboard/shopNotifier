@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block nav_settings %}active{% endblock %}
+{% block nav_settings_li %}active-page{% endblock %}
+{% block nav_settings_telegram %}active{% endblock %}
+
+{% block content %}
+
+    <div class="main-wrapper">
+      <div id="alertBox" class="alert alert-success" data-alert="alert">Новые настройки успешно применены!</div>
+      <div class="row">
+                        <div class="col">
+                            <div class="card" id="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Настройка Telegram уведомлений</h5>
+                                    <p class="card-description">В поле ниже необходимо вставить свой <b>Telegram ID</b>, узнать его можно у бота <code>@getmyid_bot</code><br>После чего <b>обязательно</b> написать боту <code>@arzshopnotifier_bot</code> любой текст, чтобы он вам мог отправлять сообщения.</p>
+                                      <div class="input-group">
+                                        <input type="text" class="form-control" id="tid" placeholder="1464241478" value="{{ telegram_id }}" aria-label="Telegram ID">
+                                        <button class="btn btn-outline-secondary" type="button" id="save_tid">Сохранить</button>
+                                        <button class="btn btn-outline-secondary" type="button" id="test_alert">Отправить тестовое уведомление</button>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Переменные в уведомлениях</h5>
+                    <p class="card-description">В этом блоке можно указать, что именно вы хотите видеть в уведомлениях Telegram</p>
+                    <form id="alert-settings">
+                        <div class="row">
+                            <div class="col">
+                                <h5>При покупке/продаже</h5>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheck1" name="name" {{ checkboxes[0] }}>
+                                    <label class="form-check-label" for="flexCheck1">Название товара</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheck2" name="price" {{ checkboxes[1] }}>
+                                    <label class="form-check-label" for="flexCheck2">Стоимость</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheck3" name="count" {{ checkboxes[2] }}>
+                                    <label class="form-check-label" for="flexCheck3">Количество</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheck4" name="player" {{ checkboxes[3] }}>
+                                    <label class="form-check-label" for="flexCheck4">Ник игрока</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheck5" name="balance" {{ checkboxes[4] }}>
+                                    <label class="form-check-label" for="flexCheck5">Баланс</label>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h5>Глобальные уведомления</h5>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheck6" name="rent" {{ checkboxes[5] }}>
+                                    <label class="form-check-label" for="flexCheck6">При успешной аренде лавки</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheck7" name="death" {{ checkboxes[6] }}>
+                                    <label class="form-check-label" for="flexCheck7">При смерти</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="1" id="flexCheck8" name="disconnect" {{ checkboxes[7] }}>
+                                    <label class="form-check-label" for="flexCheck8">При отключении от сервера</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function() {
+    $('#save_tid').click(function() {
+        $.ajax({
+          url: "/settings/telegram?tid=" + document.getElementById('tid').value,
+          type: "POST",
+          beforeSend: function(xhr){
+            $.blockUI({
+                message: '<div class="spinner-grow text-success" role="status"><span class="sr-only">Сохранение...</span></div>',
+                timeout: 500
+            });
+          },
+          success: function(data) {
+          $("#alertBox").fadeIn();
+            window.setTimeout(function () {
+                $("#alertBox").fadeOut(300)
+            }, 3000);
+          },
+        });
+    });
+    $('#test_alert').click(function() {
+        "use strict";
+        $('#card').block({
+            message: '<div class="spinner-grow text-success" role="status"><span class="sr-only">Отправка...</span></div>',
+            timeout: 500
+        });
+        $.ajax({
+          url: "/api/alert/" + document.getElementById('tid').value
+        }).success(function(data) {
+          // do something here
+        });
+    });
+
+    var timeoutId;
+    $('form input').on('input propertychange change', function() {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(function() {
+            saveToDB();
+        }, 1000);
+    });
+
+    function saveToDB(){
+        var queryString = $('#alert-settings').serialize();
+        $.ajax({
+          url: "/settings/telegram?" + queryString,
+          type: "POST",
+          success: function(data) {
+          $("#alertBox").fadeIn();
+            window.setTimeout(function () {
+                $("#alertBox").fadeOut(300)
+            }, 3000);
+          },
+        });
+        $("#alertBox").fadeIn();
+        window.setTimeout(function () {
+            $("#alertBox").fadeOut(300)
+        }, 3000);
+    }
+});
+</script>
+{% endblock %}

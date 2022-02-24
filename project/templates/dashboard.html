@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block nav_dashboard %}active{% endblock %}
+{% block nav_dashboard_li %}active-page{% endblock %}
+{% block nav_dashboard_main %}active{% endblock %}
+
+{% block content %}
+    <div class="main-wrapper">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card main-chart-card">
+            <div class="card-body">
+              <div id="main_chart"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="row">
+                      <div class="col-lg-6">
+                        <div class="card stats-card">
+                          <div class="card-body">
+                            <div class="stats-info">
+                              <h5 class="card-title">${{ total_money.replace("$-", "-$") }}<span class="stats-change stats-change-{{ weekly_difference['style'] }}">{{ weekly_difference['percent'] }}</span></h5>
+                              <p class="stats-text">Итого заработок за 7 дней</p>
+                            </div>
+                            <div class="stats-icon change-{{ weekly_difference['style'] }}">
+                              <i class="material-icons">{{ weekly_difference['arrow'] }}</i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="card stats-card">
+                          <div class="card-body">
+                            <div class="stats-info">
+                              <h5 class="card-title">{{ operations_all }}<span class="stats-change stats-change-{{ weekly_difference_operations['style'] }}">{{ weekly_difference_operations['percent'] }}</span></h5>
+                              <p class="stats-text">Всего операций за 7 дней</p>
+                            </div>
+                            <div class="stats-icon change-{{ weekly_difference_operations['style'] }}">
+                              <i class="material-icons">{{ weekly_difference_operations['arrow'] }}</i>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="card stats-card">
+                          <div class="card-body">
+                            <div class="stats-info">
+                                <h5 class="card-title">${{ earned_today.replace("$-", "-$") }}<span class="stats-change stats-change-{{ daily_difference['style'] }}">{{ daily_difference['percent'] }}</span></h5>
+                                <p class="stats-text">Итого за сутки</p>
+                            </div>
+                            <div class="stats-icon change-{{ daily_difference['style'] }}">
+                                <i class="material-icons">{{ daily_difference['arrow'] }}</i>
+                            </div>
+                        </div>
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="card stats-card">
+                          <div class="card-body">
+                            <div class="stats-info">
+                                <h5 class="card-title">{{ operations_today }}<span class="stats-change stats-change-{{ daily_difference_operations['style'] }}">{{ daily_difference_operations['percent'] }}</span></h5>
+                                <p class="stats-text">Операций за сутки</p>
+                            </div>
+                            <div class="stats-icon change-{{ daily_difference_operations['style'] }}">
+                                <i class="material-icons">{{ daily_difference_operations['arrow'] }}</i>
+                            </div>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 flex">
+          <div class="card card-bg">
+            <div class="card-body" style="position: relative;">
+              <h5 class="card-title">Статистика за сутки</h5>
+              <div id="today_chart" style="min-height: 300px;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 flex">
+          <div class="card card-bg">
+        <div class="card-body">
+          <h5 class="card-title">Последние действия</h5>
+          <table class="table crypto-table">
+            <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Тип</th>
+              <th scope="col">Название</th>
+              <th scope="col">Количество</th>
+              <th scope="col">Сумма</th>
+              <th scope="col">Игрок</th>
+              <th scope="col">Время</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in last_moves %}
+            <tr>
+              <th scope="row">{{ row["id"] }}</th>
+              <th>{{ row["type"].replace("sell", "Продажа").replace("buy", "Покупка") }}</th>
+              <th>{{ row["name"] }}</th>
+              <th>{{ row["count"] }}</th>
+              <th>${{ row['price'] }}</th>
+              <th>{{ row["player"] }}</th>
+              <th>{{ row["time"].split(" ")[4] }}</th>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$(document).ready(function () {
+
+  "use strict";
+
+  var options2 = {
+        chart: {
+            height: 300,
+            type: 'area',
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'smooth'
+        },
+        series: [{
+            name: 'Продажи',
+            data: {{ today_chart['sold'] }}
+        }, {
+            name: 'Покупки',
+            data: {{ today_chart['brought'] }}
+        }],
+
+        xaxis: {
+            type: 'string',
+            categories: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+            labels: {
+                style: {
+                    colors: 'rgba(94, 96, 110, .5)'
+                }
+            }
+        },
+        yaxis: {
+            title: {
+                text: '$ (Суммы)'
+            }
+        },
+        tooltip: {
+            x: {
+                format: 'HH:mm'
+            },
+            y: {
+                formatter: function (val) {
+                    return "$" + val + ""
+                }
+            }
+        },
+        grid: {
+            borderColor: 'rgba(94, 96, 110, .5)',
+            strokeDashArray: 4
+        }
+    }
+
+    var chart2 = new ApexCharts(
+        document.querySelector("#today_chart"),
+        options2
+    );
+
+    chart2.render();
+
+  var options3 = {
+        chart: {
+            height: 270,
+            type: 'bar',
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                endingShape: 'rounded',
+                borderRadius: 10
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
+        series: [{
+            name: 'Прибыль',
+            data: {{ chart['earned'] }}
+        }, {
+            name: 'Продажа',
+            data: {{ chart['sell'] }}
+        }, {
+            name: 'Покупка',
+            data: {{ chart['buy'] }}
+        }],
+        xaxis: {
+            categories: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
+            labels: {
+                style: {
+                    colors: 'rgba(94, 96, 110, .5)'
+                }
+            }
+        },
+        yaxis: {
+            title: {
+                text: '$ (Суммы)'
+            }
+        },
+        fill: {
+            opacity: 1
+
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return "$" + val + ""
+                }
+            }
+        },
+        grid: {
+            borderColor: 'rgba(94, 96, 110, .5)',
+            strokeDashArray: 4
+        }
+    }
+
+    var chart3 = new ApexCharts(
+        document.querySelector("#main_chart"),
+        options3
+    );
+
+    chart3.render();
+});
+</script>
+{% endblock %}

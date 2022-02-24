@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="keywords" content="admin,dashboard">
+        <meta name="author" content="pskateboard">
+        <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+        <!-- Title -->
+        <title>ShopNotifier - Лучший помощник барыги</title>
+        <link rel='shortcut icon' type='image/x-icon' href="{{ url_for('static', filename='assets/images/favicon.ico') }}" />
+
+        <!-- Styles -->
+        <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/font-awesome/css/all.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/perfectscroll/perfect-scrollbar.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/pace/pace.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/apexcharts/apexcharts.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/DataTables/datatables.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+
+
+        <!-- Theme Styles -->
+        <link href="{{ url_for('static', filename='assets/css/main.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/css/custom.css') }}" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <style type="text/css">
+            #alertBox {
+                position: absolute;
+                z-index: 1400;
+                top: 2%;
+                right: 4%;
+                margin: 0px auto;
+                text-align: center;
+                display: none;
+            }
+            .no-scroll::-webkit-scrollbar {display:none;}
+            .no-scroll::-moz-scrollbar {display:none;}
+            .no-scroll::-o-scrollbar {display:none;}
+            .no-scroll::-google-ms-scrollbar {display:none;}
+            .no-scroll::-khtml-scrollbar {display:none;}
+        </style>
+
+    </head>
+    <body>
+        <div class="page-container">
+          <div class="page-sidebar">
+              <a class="logo" href="/dashboard">ShopNotifier</a>
+              <ul class="list-unstyled accordion-menu">
+                <li class="{% block nav_dashboard_li %}{% endblock %}">
+                  <a href="#" class="{% block nav_dashboard %}{% endblock %}"><i data-feather="activity"></i>Dashboard<i class="fas fa-chevron-right dropdown-icon"></i></a>
+                  <ul class="">
+                    <li><a href="/dashboard" class="{% block nav_dashboard_main %}{% endblock %}"><i class="far fa-circle"></i>Главная</a></li>
+                    <li><a href="/other" class="{% block nav_dashboard_other %}{% endblock %}"><i class="far fa-circle"></i>Дополнительно</a></li>
+                  </ul>
+                </li>
+                <li class="{% block nav_stats_li %}{% endblock %}">
+                  <a href="#" class="{% block nav_stats %}{% endblock %}"><i data-feather="star"></i>Статистика<i class="fas fa-chevron-right dropdown-icon"></i></a>
+                  <ul class="">
+                    <li><a href="/stats/sales" class="{% block nav_stats_sales %}{% endblock %}"><i class="far fa-circle"></i>Продажи</a></li>
+                    <li><a href="/stats/purchases" class="{% block nav_stats_purchases %}{% endblock %}"><i class="far fa-circle"></i>Покупки</a></li>
+                      <li><a href="/stats/medium" class="{% block nav_stats_medium %}{% endblock %}"><i class="far fa-circle"></i>Средние цены</a></li>
+                  </ul>
+                </li>
+                <li class="{% block nav_settings_li %}{% endblock %}">
+                    <a href="#" class="{% block nav_settings %}{% endblock %}"><i data-feather="sliders"></i>Настройки<i class="fas fa-chevron-right dropdown-icon"></i></a>
+                    <ul class="">
+                        <li><a href="/settings/account" class="{% block nav_settings_account %}{% endblock %}"><i class="far fa-circle"></i>Аккаунт</a></li>
+                        <li><a href="/settings/telegram" class="{% block nav_settings_telegram %}{% endblock %}"><i class="far fa-circle"></i>Telegram</a></li>
+                        <li><a href="/buyout" class="{% block nav_settings_buyout %}{% endblock %}"><i class="far fa-circle"></i>Настройки скупки</a></li>
+                    </ul>
+                </li>
+              </ul>
+              <a href="#" id="sidebar-collapsed-toggle"><i data-feather="arrow-right"></i></a>
+          </div>
+        <div class="page-content">
+            <div class="page-header">
+              <nav class="navbar navbar-expand-lg d-flex justify-content-between">
+                <div class="header-title flex-fill">
+                  <a href="#" id="sidebar-toggle"><i data-feather="arrow-left"></i></a>
+                  <h5>{{ title }}</h5>
+                </div>
+                <div class="flex-fill" id="headerNav">
+                  <ul class="navbar-nav">
+                      <li class="nav-item dropdown">
+                          <a class="nav-link notifications-dropdown" href="#" id="notificationsDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span id="alert_count">{{ alerts['count'] }}</span>{% if alerts['count'] > 0 %}<div class="spinner-grow text-danger" role="status"></div>{% endif %}</a>
+                          <div class="dropdown-menu dropdown-menu-end notif-drop-menu" aria-labelledby="notificationsDropDown">
+                            <h6 class="dropdown-header">Уведомления</h6>
+                            {% if alerts['array'] %}
+                            {% for item in alerts['array'] %}
+                            <a href="#" id="mark_seen">
+                              <div class="header-notif">
+                                <div class="notif-image">
+                                  <span class="notification-badge bg-info text-white">
+                                    <i class="fas fa-bullhorn"></i>
+                                  </span>
+                                </div>
+                                <div class="notif-text">
+                                  <p class="bold-notif-text">{{ item['message'] }}</p>
+                                  <small>{{ item['time'].split(" ")[4] }}</small>
+                                  <input type="hidden" id="alert_id" value="{{ item['id'] }}">
+                                </div>
+                              </div>
+                            </a>
+                            {% endfor %}
+                            {% endif %}
+                          </div>
+                        </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link profile-dropdown" href="#" id="profileDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="margin-top: 12px;"><h6>{{ username }}</h6></a>
+                      <div class="dropdown-menu dropdown-menu-end profile-drop-menu" aria-labelledby="profileDropDown">
+                        <a class="dropdown-item" href="/profile"><i data-feather="user"></i>Аккаунт</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/settings"><i data-feather="settings"></i>Настройки</a>
+                        <a class="dropdown-item" href="/logout"><i data-feather="log-out"></i>Выйти</a>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+            </div>
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+
+
+
+        <!-- Javascripts -->
+        <script src="{{ url_for('static', filename='assets/plugins/jquery/jquery-3.4.1.min.js') }}"></script>
+        <script src="https://unpkg.com/@popperjs/core@2"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/bootstrap/js/bootstrap-notify.js') }}"></script>
+        <script src="https://unpkg.com/feather-icons"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/perfectscroll/perfect-scrollbar.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/pace/pace.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/js/main.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/apexcharts/apexcharts.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/chartjs/chart.bundle.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/sparkline/jquery.sparkline.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/blockui/jquery.blockUI.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/DataTables/datatables.min.js') }}"></script>
+
+        <script>
+        var stringToColour = function(str) {
+            var hash = 0;
+            for (var i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            var colour = '#';
+            for (var i = 0; i < 3; i++) {
+                var value = (hash >> (i * 8)) & 0xFF;
+                colour += ('00' + value.toString(16)).substr(-2);
+            }
+            return colour;
+        }
+
+            $(document).ready(function() {
+                $('#mark_seen').click(function() {
+                    var el = $(this).find("#alert_id")
+                    $.ajax({
+                      url: "/api/hidealert/" + el.val(),
+                      type: "GET",
+                      success: function(data) {
+                        el.closest("a").remove()
+                        alert_count = document.getElementById('alert_count');
+                        alert_count.innerHTML = alert_count.innerHTML - 1;
+                      }
+                    });
+                });
+            });
+        </script>
+        {% block javascript %}
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="keywords" content="shopnotifier,dashboard">
+        <meta name="author" content="pskateboard">
+        <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        
+        <!-- Title -->
+        <title>ShopNotifier - Лучший помощник барыги</title>
+
+        <!-- Styles -->
+        <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/font-awesome/css/all.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/perfectscroll/perfect-scrollbar.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/plugins/pace/pace.css') }}" rel="stylesheet">
+
+      
+        <!-- Theme Styles -->
+        <link href="{{ url_for('static', filename='assets/css/main.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='assets/css/custom.css') }}" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body class="error-page err-404">
+        <div class="container">
+            <div class="error-container">
+                <div class="error-info">
+                    <h1>404</h1>
+                    <p>Кажется, страницу которую вы пытаетесь посмотреть не существует.<br>Обратитесь в <a href="#">поддержку</a> или вернитесь <a href="/">на главную страницу</a>.</p>
+                </div>
+                <div class="error-image"></div>
+            </div>
+        </div>
+         
+        
+        <!-- Javascripts -->
+        <script src="{{ url_for('static', filename='assets/plugins/jquery/jquery-3.4.1.min.js') }}"></script>
+        <script src="https://unpkg.com/@popperjs/core@2"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+        <script src="https://unpkg.com/feather-icons"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/perfectscroll/perfect-scrollbar.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/plugins/pace/pace.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='assets/js/main.min.js') }}"></script>
+    </body>
+</html>

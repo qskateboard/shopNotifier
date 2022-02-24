@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block nav_stats %}active{% endblock %}
+{% block nav_stats_li %}active-page{% endblock %}
+{% block nav_stats_medium %}active{% endblock %}
+
+{% block content %}
+
+    <div class="main-wrapper">
+      <div class="row">
+          <div class="col">
+              <div class="card">
+                  <div class="card-body" style="width:100%">
+                      <h5 class="card-title">Средние цены для торговли на центральном рынке</h5>
+                       <table id="zero-conf" class="display" style="width:100%">
+                           <thead>
+                               <tr>
+                                   <th>ID</th>
+                                   <th>Название товара</th>
+                                   <th>Цена продажи</th>
+                                   <th>Цена покупки</th>
+                                   <th>Сервер</th>
+                                   <th>Дата последнего изменения</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               {% for row in data %}
+                               <tr>
+                                   <td>{{ row["id"] }}</td>
+                                   <td>{{ row["name"] }}</td>
+                                   <td>${{ row["sell"] }}</td>
+                                   <td>${{ row['buy'] }}</td>
+                                   <td>{{ row["server"] }}</td>
+                                   <td>{{ row["time"] }}</td>
+                               </tr>
+                               {% endfor %}
+                           </tbody>
+                           <tfoot>
+                               <tr>
+                                   <th>ID</th>
+                                   <th>Название товара</th>
+                                   <th>Цена продажи</th>
+                                   <th>Цена покупки</th>
+                                   <th>Сервер</th>
+                                   <th>Дата последнего изменения</th>
+                               </tr>
+                           </tfoot>
+                       </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function() {
+        $('#zero-conf').DataTable({
+            "order": [[ 0, "asc" ]]
+        });
+    });
+</script>
+{% endblock %}

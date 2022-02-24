@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block nav_settings %}active{% endblock %}
+{% block nav_settings_li %}active-page{% endblock %}
+{% block nav_settings_buyout %}active{% endblock %}
+
+{% block content %}
+
+    <div class="main-wrapper">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Добавить новый товар на покупку</h5>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <select class="js-states form-control no-scroll" tabindex="-1" style="display: none; width: 100%;">
+                                  {% for row in goods %}
+                                    <option value="{{ row['id'] }}">{{ row['name'] }} - Покупка: ${{ row['buy'] }} - Продажа: ${{ row['sell'] }}</option>
+                                  {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-outline-success m-b-xs">Добавить выбранный товар</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      <div class="row">
+          <div class="col">
+              <div class="card">
+                  <div class="card-body" style="width:100%">
+                      <h5 class="card-title">Текущие товары на покупке</h5>
+                       <table id="zero-conf" class="display" style="width:100%">
+                           <thead>
+                               <tr>
+                                   <th>Название товара</th>
+                                   <th>Количество</th>
+                                   <th>Стоимость</th>
+                                   <th>Итого</th>
+                                   <th>Действие</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+
+                           </tbody>
+                           <tfoot>
+                               <tr>
+                                   <th>Название товара</th>
+                                   <th>Количество</th>
+                                   <th>Стоимость</th>
+                                   <th>Итого</th>
+                                   <th>Действие</th>
+                               </tr>
+                           </tfoot>
+                       </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function() {
+    $('select').select2();
+    $('#zero-conf').DataTable({
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block nav_stats %}active{% endblock %}
+{% block nav_stats_li %}active-page{% endblock %}
+{% block nav_stats_sales %}active{% endblock %}
+
+{% block content %}
+
+    <div class="main-wrapper">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Больше всего прибыли</h5>
+                        <canvas id="chartjs1">Your browser does not support the canvas element.</canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Больше всего продано</h5>
+                        <canvas id="chartjs2">Your browser does not support the canvas element.</canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Doughnut Chart</h5>
+                        <div id="sparkline3"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Doughnut Chart</h5>
+                        <div id="sparkline4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      <div class="row">
+          <div class="col">
+              <div class="card">
+                  <div class="card-body" style="width:100%">
+                      <h5 class="card-title">Продажи за всё время</h5>
+                       <table id="zero-conf" class="display" style="width:100%">
+                           <thead>
+                               <tr>
+                                   <th>ID</th>
+                                   <th>Название товара</th>
+                                   <th>Количество</th>
+                                   <th>Стоимость</th>
+                                   <th>Игрок</th>
+                                   <th>Дата</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               {% for row in data %}
+                               {% if row['type'] == 'sell' %}
+                               <tr>
+                                   <td>{{ row["id"] }}</td>
+                                   <td>{{ row["name"] }}</td>
+                                   <td>{{ row["count"] }}</td>
+                                   <td>${{ row['price'] }}</td>
+                                   <td>{{ row["player"] }}</td>
+                                   <td>{{ row["time"] }}</td>
+                               </tr>
+                               {% endif %}
+                               {% endfor %}
+                           </tbody>
+                           <tfoot>
+                               <tr>
+                                   <th>ID</th>
+                                   <th>Название товара</th>
+                                   <th>Количество</th>
+                                   <th>Стоимость</th>
+                                   <th>Игрок</th>
+                                   <th>Дата</th>
+                               </tr>
+                           </tfoot>
+                       </table>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function() {
+        $('#zero-conf').DataTable({
+            "order": [[ 0, "desc" ]]
+        });
+
+            new Chart(document.getElementById("chartjs1"), {
+                "type": "doughnut",
+                options: {
+                    legend: {
+                        display: false,
+                    },
+                },
+                "data": {
+                    "labels": {{ charts['labels']|tojson }},
+                    "datasets": [{
+                        "label": "Больше всего принесло прибыли",
+                        "data": {{ charts['earned']|tojson }},
+                        "backgroundColor": {{ charts['colors']|tojson }}
+                    }]
+                }
+            });
+
+            new Chart(document.getElementById("chartjs2"), {
+                "type": "doughnut",
+                options: {
+                    legend: {
+                        display: false,
+                    },
+                },
+                "data": {
+                    "labels": {{ charts['labels']|tojson }},
+                    "datasets": [{
+                        "label": "Больше всего было продано",
+                        "data": {{ charts['count']|tojson }},
+                        "backgroundColor": {{ charts['colors']|tojson }}
+                    }]
+                }
+            });
+
+    });
+</script>
+{% endblock %}
